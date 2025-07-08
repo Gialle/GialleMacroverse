@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gialle Macroverse</title>
 
-  <!-- Monsterrat -->
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Pacifico -->
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
   <style>
@@ -25,12 +24,9 @@
       font-family: 'Pacifico', cursive;
       color: #E1306C;
     }
-    h1 {
-      color: #0066cc;
-    }
-    p {
-      font-size: 1.2rem;
-    }
+    h1 { color: #0066cc; }
+    p { font-size: 1.2rem; }
+
     a.button {
       display: inline-block;
       margin-top: 20px;
@@ -45,50 +41,52 @@
     a.button:hover {
       background: #c72b5b;
     }
+
+    .btn-tone {
+      display: inline-block;
+      padding: 15px 30px;
+      margin: 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(45deg, #f12711, #f5af19);
+      box-shadow: 0 4px 15px rgba(241,39,17,0.5);
+      transition: all 0.3s ease;
+    }
+    .btn-tone:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(245,175,25,0.7);
+    }
+    .btn-tone:active {
+      transform: scale(0.95);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
+
 <body>
-  <h1>Selamat datang di <span>Gialle Macroverse!</span></h1>
+  <h1>Selamat datang di <span class="special">Gialle Macroverse!</span></h1>
   <p>Seluruh semesta dalam benakku ada di sini!</p>
 
   <a class="button" href="https://instagram.com/rizalleksono" target="_blank">
     Kunjungi Instagramku @rizalleksono!
   </a>
+
   <p>Klik tombol untuk memainkan nada berbeda.</p>
   <h1>Oscillator Sustain</h1>
-  <p>Tekan tombol <strong>A S D</strong> untuk sustain nada selama ditekan.</p>
+  <p>Tekan tombol <strong>A S D</strong> atau klik tombol di bawah untuk sustain nada.</p>
   
-  <a class="btn-tone" onclick="playCent(0)">A4</a>
-  <a class="btn-tone" onclick="playCent(100)">Bb</a>
-  <a class="btn-tone" onclick="playCent(700)">E</a>
+  <a class="btn-tone" onmousedown="startNote('btn1',0)" onmouseup="stopNote('btn1')" onmouseleave="stopNote('btn1')">A4</a>
+  <a class="btn-tone" onmousedown="startNote('btn2',100)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Bb</a>
+  <a class="btn-tone" onmousedown="startNote('btn3',700)" onmouseup="stopNote('btn3')" onmouseleave="stopNote('btn3')">E</a>
 
-  <style>
-.btn-tone {
-  display: inline-block;
-  padding: 15px 30px;
-  margin: 10px;
-  border-radius: 12px;
-  font-weight: bold;
-  text-decoration: none;
-  color: white;
-  background: linear-gradient(45deg, #f12711, #f5af19);
-  box-shadow: 0 4px 15px rgba(241,39,17,0.5);
-  transition: all 0.3s ease;
-}
-.btn-tone:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(245,175,25,0.7);
-}
-.btn-tone:active {
-  transform: scale(0.95);
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
-}
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const activeNotes = {}; // key -> {oscillator, gain}
+    const activeNotes = {};
 
     function startNote(key, cents) {
-      if (activeNotes[key]) return; // sudah ada, jangan duplikasi
+      if (activeNotes[key]) return;
       const freqRef = 440;
       const freq = freqRef * Math.pow(2, cents / 1200);
 
@@ -103,7 +101,6 @@
       gain.connect(audioCtx.destination);
 
       oscillator.start();
-
       activeNotes[key] = {oscillator, gain};
     }
 
@@ -115,7 +112,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (e.repeat) return; // supaya nggak spam
+      if (e.repeat) return;
       if (e.key === 'a') startNote('a', 0);
       if (e.key === 's') startNote('s', 100);
       if (e.key === 'd') startNote('d', 700);
