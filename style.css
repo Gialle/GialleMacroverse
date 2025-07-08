@@ -36,12 +36,14 @@ select, input {
 
 a {
   display: inline-block;
-  padding: 5px 5px;
+  width: 60px;
+  text-align: center;
+  font-family: monospace;
+  padding: 6px 0;
   margin: 5px;
-  border-radius: 5px;
+  border-radius: 6px;
   color: white;
   cursor: pointer;
-  min-width: 30px;
 }
 
 .ruby { background: linear-gradient(45deg, #f11755, #f55f79);}
