@@ -1,95 +1,97 @@
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const activeNotes = {};
-const keyBindings = [];
-const keyMap = "1234567890qwertyuiopasdfghjklzxcvbnm,.;/";
-
-const select = document.getElementById("scaleSelect");
-const container = document.getElementById("scaleContainer");
-
-// fallback local scales
-const fallbackScales = {
-  salendro: [...],
-  degung: [...],
-  // isinya persis yg udah kamu punya
-};
-
-function buildScaleUI(rows, scaleName) {
-  container.innerHTML = "";
-  keyBindings.length = 0;
-  let idx = 0;
-  for (let o=0; o<5; o++) {
-    rows.forEach((note,i)=>{
-      const cents = note.cents + (1200*o);
-      const keyId = scaleName+o+i;
-      const keyChar = keyMap[idx++] || "";
-      const a = document.createElement('a');
-      a.className = note.cls;
-      a.innerHTML = `${note.name}<br>[${keyChar}]<br>${cents}c`;
-      a.onmousedown=()=>startNote(keyId,cents);
-      a.onmouseup=a.onmouseleave=()=>stopNote(keyId);
-      a.ontouchstart=(e)=>{e.preventDefault();startNote(keyId,cents);};
-      a.ontouchend=()=>stopNote(keyId);
-      container.appendChild(a);
-      keyBindings.push({key:keyChar, id:keyId, cents});
-    });
-    container.appendChild(document.createElement('br'));
-  }
+{
+  "scales": [
+    {
+      "name": "Saléndro",
+      "notes": [
+        {"name": "Tugu", "cents": 0},
+        {"name": "Singgul", "cents": 240},
+        {"name": "Galimer", "cents": 480},
+        {"name": "Panelu", "cents": 720},
+        {"name": "Loloran", "cents": 960},
+        {"name": "Tugu+8va", "cents": 1200}
+      ]
+    },
+    {
+      "name": "Degung",
+      "notes": [
+        {"name": "Tugu", "cents": 0},
+        {"name": "Singgul", "cents": 386},
+        {"name": "Galimer", "cents": 498},
+        {"name": "Panelu", "cents": 702},
+        {"name": "Loloran", "cents": 1088},
+        {"name": "Tugu+8va", "cents": 1200}
+      ]
+    },
+    {
+      "name": "Madenda",
+      "notes": [
+        {"name": "Tugu", "cents": 0},
+        {"name": "Singgul", "cents": 386},
+        {"name": "Galimer", "cents": 590},
+        {"name": "Panelu", "cents": 702},
+        {"name": "Loloran", "cents": 1088},
+        {"name": "Tugu+8va", "cents": 1200}
+      ]
+    },
+    {
+      "name": "Extended JI",
+      "notes": [
+        {"name": "Tugu", "cents": 0},
+        {"name": "Tugu-", "cents": 112},
+        {"name": "Sorog", "cents": 204},
+        {"name": "Singgul", "cents": 386},
+        {"name": "Galimer", "cents": 498},
+        {"name": "Galimer-", "cents": 590},
+        {"name": "Panelu", "cents": 702},
+        {"name": "Bungur", "cents": 884},
+        {"name": "Loloran+", "cents": 1018},
+        {"name": "Loloran", "cents": 1088},
+        {"name": "Tugu+8va", "cents": 1200}
+      ]
+    },
+    {
+      "name": "15 EDO",
+      "notes": [
+        {"name": "Tugu", "cents": 0},
+        {"name": "Singgul+", "cents": 80},
+        {"name": "Tugu-", "cents": 160},
+        {"name": "Singgul", "cents": 240},
+        {"name": "Galimer+", "cents": 320},
+        {"name": "Singgul-", "cents": 400},
+        {"name": "Galimer", "cents": 480},
+        {"name": "Panelu", "cents": 560},
+        {"name": "Galimer-", "cents": 640},
+        {"name": "Panelu-", "cents": 720},
+        {"name": "Loloran+", "cents": 800},
+        {"name": "Panelu--", "cents": 880},
+        {"name": "Loloran", "cents": 960},
+        {"name": "Tugu+", "cents": 1040},
+        {"name": "Loloran++", "cents": 1120},
+        {"name": "Tugu+8va", "cents": 1200}
+      ]
+    },
+    {
+      "name": "17 EDO",
+      "notes": [
+        {"name": "Tugu", "cents": 0},
+        {"name": "Sorog+", "cents": 71},
+        {"name": "Tugu-", "cents": 141},
+        {"name": "Sorog", "cents": 212},
+        {"name": "Singgul+", "cents": 282},
+        {"name": "Sorog-", "cents": 353},
+        {"name": "Singgul", "cents": 424},
+        {"name": "Galimer", "cents": 494},
+        {"name": "Singgul-", "cents": 565},
+        {"name": "Galimer-", "cents": 635},
+        {"name": "Panelu", "cents": 706},
+        {"name": "Bungur+", "cents": 776},
+        {"name": "Panelu-", "cents": 847},
+        {"name": "Bungur", "cents": 918},
+        {"name": "Loloran+", "cents": 988},
+        {"name": "Bungur-", "cents": 1059},
+        {"name": "Loloran", "cents": 1129},
+        {"name": "Tugu+8va", "cents": 1200}
+      ]
+    }
+  ]
 }
-
-function startNote(...) {...}
-function stopNote(...) {...}
-function getBaseFreq() {...}
-function midiToHz(...) {...}
-
-// load scale.json
-fetch('scale.json')
-  .then(res => res.json())
-  .then(data => {
-    data.scales.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s.name;
-      opt.innerText = s.name;
-      select.appendChild(opt);
-    });
-    select.addEventListener("change", () => {
-      const scale = data.scales.find(sc => sc.name === select.value);
-      buildScaleUI(scale.notes.map((c, i) => ({
-        name: `${i+1}`,
-        cents: c,
-        cls: ["ruby","orng","emra","turq","amet","gold","moss","aqua"][i%8]
-      })), scale.name);
-    });
-    // render pertama
-    const scale = data.scales[0];
-    select.value = scale.name;
-    buildScaleUI(scale.notes.map((c, i) => ({
-      name: `${i+1}`,
-      cents: c,
-      cls: ["ruby","orng","emra","turq","amet","gold","moss","aqua"][i%8]
-    })), scale.name);
-  })
-  .catch(() => {
-    // fallback
-    Object.keys(fallbackScales).forEach(name=>{
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.innerText = name;
-      select.appendChild(opt);
-    });
-    select.addEventListener("change", () => {
-      buildScaleUI(fallbackScales[select.value], select.value);
-    });
-    select.value = "salendro";
-    buildScaleUI(fallbackScales.salendro, "salendro");
-  });
-
-// keyboard
-document.addEventListener('keydown', (e) => {
-  if (e.repeat) return;
-  const b = keyBindings.find(b => b.key === e.key);
-  if (b) startNote(b.id, b.cents);
-});
-document.addEventListener('keyup', (e) => {
-  const b = keyBindings.find(b => b.key === e.key);
-  if (b) stopNote(b.id);
-});
