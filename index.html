@@ -15,6 +15,10 @@
       text-align: center; 
       background: #fafafa; 
       padding: 2rem; 
+      user-select: none; /* supaya teksnya gak bisa disorot */
+      -webkit-user-select: none; /* Safari & Chrome mobile */
+      -ms-user-select: none; /* IE/Edge lawas */
+  }
     }
     .ruby {
       display: inline-block;
@@ -160,7 +164,7 @@
   <p>Degung, Tugu=440hz
   <br>
 
-<a class="turq" onmousedown="startNote('btn9',-498)" onmouseup="stopNote('btn9')" onmouseleave="stopNote('btn0')">Panelu<br>3̇</a> 
+  <a class="turq" onmousedown="startNote('btn9',-498)" onmouseup="stopNote('btn9')" onmouseleave="stopNote('btn0')">Panelu<br>3̇</a> 
   <a class="aqua" onmousedown="startNote('btn10',-316)" onmouseup="stopNote('btn10')" onmouseleave="stopNote('btn1')">Bungur<br>-3̇</a> 
   <a class="amet" onmousedown="startNote('btn11',-112)" onmouseup="stopNote('btn11')" onmouseleave="stopNote('btn2')">Loloran<br>2̇</a>
   <a class="ruby" onmousedown="startNote('btn12',0)" onmouseup="stopNote('btn12')" onmouseleave="stopNote('btn3')">Tugu<br>1̇</a>
@@ -199,7 +203,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.repeat) return;
-      if (e.key === '1') startNote('key0', -480);
+      if (e.key === '1') startNote('panelu', -480);
       if (e.key === '2') startNote('key1', -240);
       if (e.key === '3') startNote('key2', 0);
       if (e.key === '4') startNote('key3', 240);
@@ -222,7 +226,7 @@
 
     });
     document.addEventListener('keyup', (e) => {
-      if (e.key === '1') stopNote('key0');
+      if (e.key === '1') stopNote('panelu');
       if (e.key === '2') stopNote('key1');
       if (e.key === '3') stopNote('key2');
       if (e.key === '4') stopNote('key3');
@@ -242,6 +246,7 @@
       if (e.key === 'o') stopNote('key17');
       if (e.key === 'p') stopNote('key18');
       if (e.key === '[') stopNote('key19');
+
     });
   </script>
 </body>
