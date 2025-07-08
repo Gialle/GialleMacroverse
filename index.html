@@ -55,11 +55,14 @@
     Kunjungi Instagramku @rizalleksono!
   </a>
   <p>Klik tombol untuk memainkan nada berbeda.</p>
+  <h1>Oscillator Sustain</h1>
+  <p>Tekan tombol <strong>A S D</strong> untuk sustain nada selama ditekan.</p>
+  
+  <a class="btn-tone" onclick="playCent(0)">A4</a>
+  <a class="btn-tone" onclick="playCent(100)">Bb</a>
+  <a class="btn-tone" onclick="playCent(700)">E</a>
 
- <a class="btn-tone" onclick="playCent(0)">0 cents (A4)</a>
-  <a class="btn-tone" onclick="playCent(100)">+100 cents</a>
-  <a class="btn-tone" onclick="playCent(700)">+700 cents</a>
-<style>
+  <style>
 .btn-tone {
   display: inline-block;
   padding: 15px 30px;
@@ -80,18 +83,18 @@
   transform: scale(0.95);
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
 }
-</style>
   <script>
-    // Buat 1 AudioContext global
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const activeNotes = {}; // key -> {oscillator, gain}
 
-    function playCent(cents) {
-      const freqRef = 440; // A4
+    function startNote(key, cents) {
+      if (activeNotes[key]) return; // sudah ada, jangan duplikasi
+      const freqRef = 440;
       const freq = freqRef * Math.pow(2, cents / 1200);
 
       const oscillator = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime); // supaya nggak terlalu keras
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
 
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
@@ -100,18 +103,28 @@
       gain.connect(audioCtx.destination);
 
       oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.5);
+
+      activeNotes[key] = {oscillator, gain};
     }
 
-    // Tangkap keyboard
-    document.addEventListener('keydown', (event) => {
-      if(event.key === 'a') {
-        playCent(0);
-      } else if(event.key === 's') {
-        playCent(100);
-      } else if(event.key === 'd') {
-        playCent(700);
-      }
+    function stopNote(key) {
+      if (!activeNotes[key]) return;
+      activeNotes[key].gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+      activeNotes[key].oscillator.stop(audioCtx.currentTime + 0.1);
+      delete activeNotes[key];
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.repeat) return; // supaya nggak spam
+      if (e.key === 'a') startNote('a', 0);
+      if (e.key === 's') startNote('s', 100);
+      if (e.key === 'd') startNote('d', 700);
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'a') stopNote('a');
+      if (e.key === 's') stopNote('s');
+      if (e.key === 'd') stopNote('d');
     });
   </script>
 </body>
