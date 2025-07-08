@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gialle Macroverse Manual Buttons</title>
+
  <!-- Import font Montserrat & Pacifico -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
 
@@ -30,17 +31,17 @@
 </head>
 <body>
   <h1>Gialle's Tones </h1>
-  <p>Klik atau tekan keyboard (A S D F) untuk bunyikan nada</p>
+  <p>Klik atau tekan keyboard (Q W E R T Y U I O P) untuk bunyikan nada</p>
   <p>Salendro Padantara/5EDO, Tugu=440hz
   <p>
   <a class="btn-tone" onmousedown="startNote('btn0',-480)" onmouseup="stopNote('btn0')" onmouseleave="stopNote('btn0')">Panelu<br>3̇<br>-480 c</a>  
   <a class="btn-tone" onmousedown="startNote('btn1',-240)" onmouseup="stopNote('btn1')" onmouseleave="stopNote('btn1')">Loloran<br>2̇<br>-240 c</a>  
-  <a class="btn-tone" onmousedown="startNote('btn2',0)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Tugu<br>1̇<br>0 c</a>
-  <a class="btn-tone" onmousedown="startNote('btn3',240)" onmouseup="stopNote('btn3')" onmouseleave="stopNote('btn3')">Singgul<br>5<br>240 c</a>
-  <a class="btn-tone" onmousedown="startNote('btn4',480)" onmouseup="stopNote('btn4')" onmouseleave="stopNote('btn4')">Galimer<br>4<br>480 c</a>
-  <a class="btn-tone" onmousedown="startNote('btn5',720)" onmouseup="stopNote('btn5')" onmouseleave="stopNote('btn5')">Panelu<br>3<br>720 c</a>
-  <a class="btn-tone" onmousedown="startNote('btn6',960)" onmouseup="stopNote('btn6')" onmouseleave="stopNote('btn6')">Loloran<br>2<br>960 c</a>
-  <a class="btn-tone" onmousedown="startNote('btn7',1200)" onmouseup="stopNote('btn7')" onmouseleave="stopNote('btn7')">Tugu<br>1<br>1200 c</a>
+  <a class="btn-tone" onmousedown="startNote('btn2',0)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Tugu<br>1̇</a>
+  <a class="btn-tone" onmousedown="startNote('btn3',240)" onmouseup="stopNote('btn3')" onmouseleave="stopNote('btn3')">Singgul<br>5</a>
+  <a class="btn-tone" onmousedown="startNote('btn4',480)" onmouseup="stopNote('btn4')" onmouseleave="stopNote('btn4')">Galimer<br>4</a>
+  <a class="btn-tone" onmousedown="startNote('btn5',720)" onmouseup="stopNote('btn5')" onmouseleave="stopNote('btn5')">Panelu<br>3</a>
+  <a class="btn-tone" onmousedown="startNote('btn6',960)" onmouseup="stopNote('btn6')" onmouseleave="stopNote('btn6')">Loloran<br>2</a>
+  <a class="btn-tone" onmousedown="startNote('btn7',1200)" onmouseup="stopNote('btn7')" onmouseleave="stopNote('btn7')">Tugu<br>1</a>
  <a class="btn-tone" onmousedown="startNote('btn8',1440)" onmouseup="stopNote('btn8')" onmouseleave="stopNote('btn7')">Singgul<br>5̣<br>1440 c</a>
 
   <script>
@@ -70,26 +71,26 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.repeat) return;
-      if (e.key === 'a') startNote('key0', -480);
-      if (e.key === 's') startNote('key1', -240);
-      if (e.key === 'd') startNote('key2', 0);
-      if (e.key === 'f') startNote('key3', 240);
-      if (e.key === 'g') startNote('key4', 480);
-      if (e.key === 'h') startNote('key5', 720);
-      if (e.key === 'j') startNote('key6', 960);
-      if (e.key === 'k') startNote('key7', 1200);
-      if (e.key === 'l') startNote('key8', 1440);
+      if (e.key === 'q') startNote('key0', -480);
+      if (e.key === 'w') startNote('key1', -240);
+      if (e.key === 'e') startNote('key2', 0);
+      if (e.key === 'r') startNote('key3', 240);
+      if (e.key === 't') startNote('key4', 480);
+      if (e.key === 'y') startNote('key5', 720);
+      if (e.key === 'u') startNote('key6', 960);
+      if (e.key === 'i') startNote('key7', 1200);
+      if (e.key === 'o') startNote('key8', 1440);
     });
     document.addEventListener('keyup', (e) => {
-      if (e.key === 'a') stopNote('key0');
-      if (e.key === 's') stopNote('key1');
-      if (e.key === 'd') stopNote('key2');
-      if (e.key === 'f') stopNote('key3');
-      if (e.key === 'g') stopNote('key4');
-      if (e.key === 'h') stopNote('key5');
-      if (e.key === 'j') stopNote('key6');
-      if (e.key === 'k') stopNote('key7');
-      if (e.key === 'l') stopNote('key8');
+      if (e.key === 'q') stopNote('key0');
+      if (e.key === 'w') stopNote('key1');
+      if (e.key === 'e') stopNote('key2');
+      if (e.key === 'r') stopNote('key3');
+      if (e.key === 't') stopNote('key4');
+      if (e.key === 'y') stopNote('key5');
+      if (e.key === 'u') stopNote('key6');
+      if (e.key === 'i') stopNote('key7');
+      if (e.key === 'o') stopNote('key8');
     });
   </script>
 </body>
