@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notasi Angka Playback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background: #fdfdfd;
+      text-align: center;
+      padding: 2rem;
+    }
+    .grid {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 2rem;
+    }
+    .cell {
+      width: 50px;
+      height: 80px;
+      border: 2px solid #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-size: 1.5rem;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .highlight {
+      background: #ffd54f;
+    }
+    .dot {
+      font-size: 1rem;
+      line-height: 0.5;
+    }
+    button {
+      margin: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<h1>Notasi Angka Playback</h1>
+
+<div>
+  <button onclick="play()">▶ Play</button>
+  <button onclick="pause()">⏸ Pause</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const notation = [
+  {note: 3, dot: 'top'},
+  {note: 5, dot: 'top'},
+  {note: 6, dot: null},
+  {note: 3, dot: 'bottom'},
+  {note: null, dot: null},
+  {note: 1, dot: null}
+];
+
+const grid = document.getElementById('grid');
+notation.forEach((n, i) => {
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.dataset.index = i;
+  if (n.dot === 'top') {
+    cell.innerHTML = `<div class="dot">•</div><div>${n.note}</div>`;
+  } else if (n.dot === 'bottom') {
+    cell.innerHTML = `<div>${n.note}</div><div class="dot">•</div>`;
+  } else if (n.note !== null) {
+    cell.innerHTML = `<div>${n.note}</div>`;
+  }
+  grid.appendChild(cell);
+});
+
+let current = 0;
+let playing = false;
+let timer;
+
+function highlightNext() {
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach(c => c.classList.remove('highlight'));
+  if (current < notation.length) {
+    const cell = cells[current];
+    if (cell) cell.classList.add('highlight');
+    current++;
+  } else {
+    current = 0;
+  }
+}
+
+function play() {
+  if (playing) return;
+  playing = true;
+  highlightNext();
+  timer = setInterval(() => {
+    highlightNext();
+  }, 500); // kecepatan: 500ms per ketukan
+}
+
+function pause() {
+  playing = false;
+  clearInterval(timer);
+}
+</script>
+</body>
+</html>
