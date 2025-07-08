@@ -1,88 +1,203 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Notasi Angka Playback</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; padding: 2rem; }
-    textarea { width: 90%; height: 100px; font-size: 1.2rem; }
-    button { margin: 1rem; padding: 0.5rem 1rem; font-size: 1rem; }
-    .highlight { background: yellow; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Not Angka Polifonik Grid</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+<style>
+  body { font-family: sans-serif; text-align: center; background: #fafafa; }
+  .controls { margin: 1em; }
+  table { margin: 0 auto; border-collapse: collapse; }
+  td { border: 1px solid #ccc; padding: 0; }
+  input.noteCell {
+    width: 40px;
+    height: 32px;
+    text-align: center;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: 'Fira Code', monospace;
+  }
+</style>
 </head>
 <body>
-
-<h1>Notasi Angka Playback</h1>
-
-<textarea id="notationInput">3 •5 6 3• - 1</textarea><br>
-<button onclick="parseAndPlay()">Parse & Play</button>
-<button onclick="stop()">Stop</button>
-
-<div id="output"></div>
+<h1>Polyphonic Not Angka Grid</h1>
+<div class="controls">
+  BPM: <input type="number" id="bpm" value="120" style="width:60px">
+  Volume: <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+  <button onclick="addVoice()">+ Voice</button>
+  <button onclick="removeVoice()">- Voice</button>
+  <button onclick="addStep()">+ Step</button>
+  <button onclick="removeStep()">- Step</button>
+  <button onclick="play()">Play</button>
+  <button onclick="stop()">Stop</button>
+  <br>
+  Nada dasar (MIDI): <input type="number" id="baseMidi" value="60" style="width:50px">
+</div>
+<div id="gridContainer"></div>
 
 <script>
+let gridData = [];
+let playing = false;
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let timer;
-let currentStep = 0;
+const gainNode = audioCtx.createGain();
+gainNode.connect(audioCtx.destination);
+gainNode.gain.value = 0.5;
 
-function parseInput(text) {
-  return text.split(/\s+/).map(token => {
-    if (token === '-' || token === '') return null; // kosong/rest
-    let note = parseInt(token.replace(/[^0-9]/g, ""));
-    let dot = null;
-    if (/^•/.test(token)) dot = 'top';
-    else if (/•$/.test(token)) dot = 'bottom';
-    return {note, dot};
+document.getElementById("volume").addEventListener("input", e => {
+  gainNode.gain.value = e.target.value;
+});
+
+function initGrid(voices, steps) {
+  gridData = Array.from({length: voices}, () => Array(steps).fill(""));
+  buildGrid();
+}
+
+function buildGrid() {
+  const grid = document.createElement("table");
+  grid.id = "grid";
+  gridData.forEach((row, r) => {
+    const tr = document.createElement("tr");
+    row.forEach((val, c) => {
+      const td = document.createElement("td");
+      const input = document.createElement("input");
+      input.className = "noteCell";
+      input.value = val;
+      input.dataset.row = r;
+      input.dataset.col = c;
+      input.addEventListener("input", e => {
+        gridData[r][c] = e.target.value;
+      });
+      input.addEventListener("keydown", e => handleArrowKeys(e));
+      td.appendChild(input);
+      tr.appendChild(td);
+    });
+    grid.appendChild(tr);
   });
+  const container = document.getElementById("gridContainer");
+  container.innerHTML = "";
+  container.appendChild(grid);
 }
 
-function playNote(noteObj) {
-  if (!noteObj || !noteObj.note) return;
-  const freqBase = 220; // A3
-  let n = noteObj.note;
-  let octaveOffset = 0;
-  if (noteObj.dot === 'top') octaveOffset = 12;
-  else if (noteObj.dot === 'bottom') octaveOffset = -12;
-  const midi = 60 + n - 1 + octaveOffset; // asal konversi
-  const freq = 440 * Math.pow(2, (midi - 69)/12);
-
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  osc.connect(gain).connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.4);
+function addVoice() {
+  gridData.push(Array(gridData[0].length).fill(""));
+  buildGrid();
+}
+function removeVoice() {
+  if (gridData.length > 1) {
+    gridData.pop();
+    buildGrid();
+  }
+}
+function addStep() {
+  gridData.forEach(row => row.push(""));
+  buildGrid();
+}
+function removeStep() {
+  if (gridData[0].length > 1) {
+    gridData.forEach(row => row.pop());
+    buildGrid();
+  }
 }
 
-function parseAndPlay() {
-  stop();
-  const text = document.getElementById("notationInput").value;
-  const sequence = parseInput(text);
-  currentStep = 0;
-  const output = document.getElementById("output");
-  output.innerHTML = sequence.map((n,i)=>
-    `<span id="step-${i}">${n?.note? (n.dot==='top'?'•':'')+n.note+(n.dot==='bottom'?'•':'') : '-'}</span>`
-  ).join(' ');
+function handleArrowKeys(e) {
+  let input = e.target;
+  let row = parseInt(input.dataset.row);
+  let col = parseInt(input.dataset.col);
+  if (e.key === "ArrowRight") {
+    let next = document.querySelector(`input[data-row='${row}'][data-col='${col+1}']`);
+    if (next) { next.focus(); next.select(); e.preventDefault(); }
+  }
+  if (e.key === "ArrowLeft") {
+    let next = document.querySelector(`input[data-row='${row}'][data-col='${col-1}']`);
+    if (next) { next.focus(); next.select(); e.preventDefault(); }
+  }
+  if (e.key === "ArrowDown") {
+    let next = document.querySelector(`input[data-row='${row+1}'][data-col='${col}']`);
+    if (next) { next.focus(); next.select(); e.preventDefault(); }
+  }
+  if (e.key === "ArrowUp") {
+    let next = document.querySelector(`input[data-row='${row-1}'][data-col='${col}']`);
+    if (next) { next.focus(); next.select(); e.preventDefault(); }
+  }
+}
 
-  timer = setInterval(() => {
-    document.querySelectorAll("#output span").forEach(s => s.classList.remove("highlight"));
-    if (currentStep < sequence.length) {
-      document.getElementById(`step-${currentStep}`).classList.add("highlight");
-      playNote(sequence[currentStep]);
-      currentStep++;
-    } else {
-      stop();
+function midiToFreq(m) {
+  return 440 * Math.pow(2, (m-69)/12);
+}
+
+async function play() {
+  if (playing) return;
+  playing = true;
+  let bpm = parseFloat(document.getElementById("bpm").value);
+  let baseMidi = parseInt(document.getElementById("baseMidi").value);
+  let beatDur = 60 / bpm;
+
+  for (let step=0; step<gridData[0].length && playing; step++) {
+    let stepPromises = [];
+    for (let v=0; v<gridData.length; v++) {
+      let cell = gridData[v][step].trim();
+      if (cell !== "") {
+        let notes = cell.split("/");
+        for (let n=0; n<notes.length; n++) {
+          let noteStr = notes[n].trim();
+          if (noteStr === "0") continue;
+          let dur = beatDur / notes.length * getDotFactor(noteStr);
+          let midiOffset = parseNote(noteStr.replace(/\.+$/, ""));
+          let freq = midiToFreq(baseMidi + midiOffset);
+          stepPromises.push(playNote(freq, dur));
+        }
+      }
     }
-  }, 500); // kecepatan: 500ms
+    await Promise.all(stepPromises);
+    await sleep(beatDur);
+  }
 }
 
 function stop() {
-  clearInterval(timer);
+  playing = false;
 }
-</script>
 
+function parseNote(noteStr) {
+  let match = noteStr.match(/^([#b]?)(\d+)('?)/);
+  if (!match) return 0;
+  let accidental = match[1];
+  let degree = parseInt(match[2]);
+  let oct = (match[3]||"").length;
+  let offset = (degree-1)*2;
+  if (degree > 3) offset -= 1;
+  if (accidental === "#") offset += 1;
+  if (accidental === "b") offset -= 1;
+  offset += oct * 12;
+  return offset;
+}
+
+function getDotFactor(noteStr) {
+  let dots = (noteStr.match(/\./g)||[]).length;
+  return 1 + dots; 
+}
+
+function playNote(freq, dur) {
+  return new Promise(resolve => {
+    let osc = audioCtx.createOscillator();
+    let g = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    osc.connect(g).connect(gainNode);
+    g.gain.setValueAtTime(1, audioCtx.currentTime);
+    osc.start();
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur * 0.9);
+    osc.stop(audioCtx.currentTime + dur);
+    osc.onended = () => resolve();
+  });
+}
+
+function sleep(sec) {
+  return new Promise(r => setTimeout(r, sec*1000));
+}
+
+initGrid(2, 8);
+</script>
 </body>
 </html>
