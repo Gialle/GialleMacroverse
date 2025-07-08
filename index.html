@@ -59,7 +59,28 @@
  <a class="btn-tone" onclick="playCent(0)">0 cents (A4)</a>
   <a class="btn-tone" onclick="playCent(100)">+100 cents</a>
   <a class="btn-tone" onclick="playCent(700)">+700 cents</a>
-
+<style>
+.btn-tone {
+  display: inline-block;
+  padding: 15px 30px;
+  margin: 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(45deg, #f12711, #f5af19);
+  box-shadow: 0 4px 15px rgba(241,39,17,0.5);
+  transition: all 0.3s ease;
+}
+.btn-tone:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(245,175,25,0.7);
+}
+.btn-tone:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+}
+</style>
   <script>
     // Buat 1 AudioContext global
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
