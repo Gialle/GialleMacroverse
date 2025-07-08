@@ -54,5 +54,29 @@
   <a class="button" href="https://instagram.com/rizalleksono" target="_blank">
     Kunjungi Instagramku @rizalleksono!
   </a>
+  <p>Klik tombol untuk memainkan nada berbeda.</p>
+
+  <a class="btn-tone" onclick="playCent(0)">0 cents (A4)</a>
+  <a class="btn-tone" onclick="playCent(100)">+100 cents (A#4)</a>
+  <a class="btn-tone" onclick="playCent(700)">+700 cents (E5)</a>
+
+  <script>
+    function playCent(cents) {
+      const freqRef = 440; // A4 = 440 Hz
+      const freq = freqRef * Math.pow(2, cents / 1200);
+
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      oscillator.connect(audioCtx.destination);
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.5);
+
+      console.log(`Playing ${freq.toFixed(2)} Hz for ${cents} cents`);
+    }
+  </script>
 </body>
 </html>
