@@ -73,17 +73,30 @@
     Kunjungi Instagramku @rizalleksono!
   </a>
 
-  <p>Klik tombol untuk memainkan nada berbeda.</p>
-  <h1>Oscillator Sustain</h1>
-  <p>Tekan tombol <strong>A S D</strong> atau klik tombol di bawah untuk sustain nada.</p>
-  
-  <a class="btn-tone" onmousedown="startNote('btn1',0)" onmouseup="stopNote('btn1')" onmouseleave="stopNote('btn1')">A4</a>
-  <a class="btn-tone" onmousedown="startNote('btn2',100)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Bb</a>
-  <a class="btn-tone" onmousedown="startNote('btn3',700)" onmouseup="stopNote('btn3')" onmouseleave="stopNote('btn3')">E</a>
+  <p>Klik tombol untuk memainkan nada 17 EDO. Sustain selama ditekan.</p>
+  <div id="scale-buttons"></div>
 
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const activeNotes = {};
+
+    // Generate scale 17 EDO
+    const myScale = [];
+    for (let i = 0; i < 17; i++) {
+      myScale.push(i * (1200/17));
+    }
+
+    // Generate tombol
+    const scaleDiv = document.getElementById("scale-buttons");
+    myScale.forEach((cents, index) => {
+      const btn = document.createElement("a");
+      btn.className = "btn-tone";
+      btn.innerText = `${index+1}`;
+      btn.onmousedown = () => startNote(`btn${index}`, cents);
+      btn.onmouseup = () => stopNote(`btn${index}`);
+      btn.onmouseleave = () => stopNote(`btn${index}`);
+      scaleDiv.appendChild(btn);
+    });
 
     function startNote(key, cents) {
       if (activeNotes[key]) return;
@@ -106,23 +119,12 @@
 
     function stopNote(key) {
       if (!activeNotes[key]) return;
-      activeNotes[key].gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
-      activeNotes[key].oscillator.stop(audioCtx.currentTime + 0.1);
+      const { oscillator, gain } = activeNotes[key];
+      gain.gain.cancelScheduledValues(audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+      oscillator.stop(audioCtx.currentTime + 0.3);
       delete activeNotes[key];
     }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.repeat) return;
-      if (e.key === 'a') startNote('a', 0);
-      if (e.key === 's') startNote('s', 100);
-      if (e.key === 'd') startNote('d', 700);
-    });
-
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'a') stopNote('a');
-      if (e.key === 's') stopNote('s');
-      if (e.key === 'd') stopNote('d');
-    });
   </script>
 </body>
 </html>
