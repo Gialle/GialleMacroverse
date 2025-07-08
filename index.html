@@ -1,59 +1,178 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
+  <meta orngset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gialle Macroverse Manual Buttons</title>
+
+  <!-- Import Noto Sans -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: 'Noto Sans', sans-serif;
-      text-align: center;
-      background: #fafafa;
-      padding: 2rem;
-      user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-      touch-action: manipulation;
+   body { 
+      font-family: 'Noto Sans', sans-serif; 
+      text-align: center; 
+      background: #fafafa; 
+      padding: 2rem; 
+      user-select: none; /* supaya teksnya gak bisa disorot */
+      -webkit-user-select: none; /* Safari & Chrome mobile */
+      -ms-user-select: none; /* IE/Edge lawas */
     }
-    a {
+    .ruby {
       display: inline-block;
-      padding: 10px 15px;
+      padding: 10px 10px;
       margin: 10px;
       border-radius: 10px;
+      font-weight: light;
       color: white;
+      background: linear-gradient(45deg, #f11755, #f55f79);
+      box-shadow: 0 4px 15px rgba(241,39,17,0.5);
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      text-decoration: none;
     }
-    a:active {
+    .ruby:active {
       transform: scale(0.95) translateY(2px);
       box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
     }
-    .ruby  { background: linear-gradient(45deg, #f11755, #f55f79); }
-    .aqua  { background: linear-gradient(45deg, #36d1dc, #5b86e5); }
-    .emra  { background: linear-gradient(45deg, #56ab7f, #a8e063); }
-    .amet  { background: linear-gradient(45deg, #bc4edd, #d807bb); }
-    .gold  { background: linear-gradient(45deg, #ffdd11, #ffee88); }
-    .turq  { background: linear-gradient(45deg, #1abc9c, #00ffff); }
-    .orng  { background: linear-gradient(45deg, #ee6611, #f5aa42); }
+    .aqua {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #36d1dc, #5b86e5);
+      box-shadow: 0 4px 15px rgba(100,180,256,0.5);
+      cursor: pointer;
+    }
+    .aqua:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .emra {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #56ab7f, #a8e063);
+      box-shadow: 0 4px 15px rgba(100,200,50,0.5);
+      cursor: pointer;
+    }
+    .emra:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .amet {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #bc4edd, #d807bb);
+      box-shadow: 0 4px 15px rgba(200,100,256,0.5);
+      cursor: pointer;
+    }
+    .amet:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .gold {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #ffdd11, #ffee88);
+      box-shadow: 0 4px 15px rgba(200,200,100,0.5);
+      cursor: pointer;
+    }
+    .gold:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .turq {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #1abc9c, #00ffff);
+      box-shadow: 0 4px 15px rgba(200,200,100,0.5);
+      cursor: pointer;
+    }
+    .turq:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .gold {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #eedd11, #ffee88);
+      box-shadow: 0 4px 15px rgba(200,200,100,0.5);
+      cursor: pointer;
+    }
+    .gold:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .orng {
+      display: inline-block;
+      padding: 10px 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: light;
+      color: white;
+      background: linear-gradient(45deg, #ee6611, #f5aa42);
+      box-shadow: 0 4px 15px rgba(200,178,100,0.5);
+      cursor: pointer;
+    }
+    .orng:active {
+      transform: scale(0.95) translateY(2px);
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+    }
+
+
   </style>
 </head>
 <body>
-  <h1>Gialle's Tones</h1>
-  <p>Tekan tombol atau keyboard (1-9, QWERTYUIO) untuk bunyikan nada</p>
+  <h1>Gialle's Tones </h1>
+  <p>Klik atau tekan keyboard (1 2 3 4 5 6 7 8 9) untuk bunyikan nada</p>
+  <p>Salendro Padantara/5EDO, Tugu=440hz
+  <br>Singgul 240 c, Galimer 480 c, Panelu 720 c, Loloran 960c
+  <p>
+  <a class="turq" onmousedown="startNote('btn0',-480)" onmouseup="stopNote('btn0')" onmouseleave="stopNote('btn0')">Panelu<br>3̇</a>  
+  <a class="amet" onmousedown="startNote('btn1',-240)" onmouseup="stopNote('btn1')" onmouseleave="stopNote('btn1')">Loloran<br>2̇</a> 
+  <a class="emra" onmousedown="startNote('btn2',0)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Tugu<br>1̇</a>
+  <a class="gold" onmousedown="startNote('btn3',240)" onmouseup="stopNote('btn3')" onmouseleave="stopNote('btn3')">Singgul<br>5</a>
+  <a class="ruby" onmousedown="startNote('btn4',480)" onmouseup="stopNote('btn4')" onmouseleave="stopNote('btn4')">Galimer<br>4</a>
+  <a class="turq" onmousedown="startNote('btn5',720)" onmouseup="stopNote('btn5')" onmouseleave="stopNote('btn5')">Panelu<br>3</a>
+  <a class="amet" onmousedown="startNote('btn6',960)" onmouseup="stopNote('btn6')" onmouseleave="stopNote('btn6')">Loloran<br>2</a>
+  <a class="emra" onmousedown="startNote('btn7',1200)" onmouseup="stopNote('btn7')" onmouseleave="stopNote('btn7')">Tugu<br>1</a>
+  <a class="gold" onmousedown="startNote('btn8',1440)" onmouseup="stopNote('btn8')" onmouseleave="stopNote('btn7')">Singgul<br>5̣</a>
 
-  <div id="buttons">
-    <a class="turq" data-tone="-480">Panelu<br>3̇</a>
-    <a class="amet" data-tone="-240">Loloran<br>2̇</a>
-    <a class="emra" data-tone="0">Tugu<br>1̇</a>
-    <a class="gold" data-tone="240">Singgul<br>5</a>
-    <a class="ruby" data-tone="480">Galimer<br>4</a>
-    <a class="turq" data-tone="720">Panelu<br>3</a>
-    <a class="amet" data-tone="960">Loloran<br>2</a>
-    <a class="emra" data-tone="1200">Tugu<br>1</a>
-    <a class="gold" data-tone="1440">Singgul<br>5̣</a>
-  </div>
+<p>Klik atau tekan keyboard (Q W E R T Y U I O) untuk bunyikan nada</p>
+  <p>Degung, Tugu=440hz
+  <br>
+
+  <a class="turq" onmousedown="startNote('btn9',-498)" onmouseup="stopNote('btn9')" onmouseleave="stopNote('btn0')">Panelu<br>3̇</a> 
+  <a class="aqua" onmousedown="startNote('btn10',-316)" onmouseup="stopNote('btn10')" onmouseleave="stopNote('btn1')">Bungur<br>-3̇</a> 
+  <a class="amet" onmousedown="startNote('btn11',-112)" onmouseup="stopNote('btn11')" onmouseleave="stopNote('btn2')">Loloran<br>2̇</a>
+  <a class="ruby" onmousedown="startNote('btn12',0)" onmouseup="stopNote('btn12')" onmouseleave="stopNote('btn3')">Tugu<br>1̇</a>
+  <a class="orng" onmousedown="startNote('btn13',204)" onmouseup="stopNote('btn13')" onmouseleave="stopNote('btn4')">Sorog<br>+5</a>
+  <a class="gold" onmousedown="startNote('btn14',386)" onmouseup="stopNote('btn14')" onmouseleave="stopNote('btn5')">Singgul<br>5</a>
+  <a class="emra" onmousedown="startNote('btn15',498)" onmouseup="stopNote('btn15')" onmouseleave="stopNote('btn6')">Galimer<br>4</a>
+  <a class="turq" onmousedown="startNote('btn16',702)" onmouseup="stopNote('btn16')" onmouseleave="stopNote('btn7')">Panelu<br>3</a>
+  <a class="aqua" onmousedown="startNote('btn17',884)" onmouseup="stopNote('btn17')" onmouseleave="stopNote('btn7')">Bungur<br>-3</a>
+ <a class="amet" onmousedown="startNote('btn18',1088)" onmouseup="stopNote('btn18')" onmouseleave="stopNote('btn7')">Loloran<br>2</a>
+ <a class="ruby" onmousedown="startNote('btn19',1200)" onmouseup="stopNote('btn19')" onmouseleave="stopNote('btn7')">Tugu<br>1</a>
 
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -69,7 +188,7 @@
       osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
       osc.connect(gain).connect(audioCtx.destination);
       osc.start();
-      activeNotes[key] = { osc, gain };
+      activeNotes[key] = {osc, gain};
     }
 
     function stopNote(key) {
@@ -80,29 +199,52 @@
       delete activeNotes[key];
     }
 
-    // Support untuk klik + touch
-    document.querySelectorAll('#buttons a').forEach((btn, idx) => {
-      const cents = parseInt(btn.dataset.tone);
-      btn.addEventListener('mousedown', () => startNote(idx, cents));
-      btn.addEventListener('mouseup', () => stopNote(idx));
-      btn.addEventListener('mouseleave', () => stopNote(idx));
-      btn.addEventListener('touchstart', e => { e.preventDefault(); startNote(idx, cents); });
-      btn.addEventListener('touchend', () => stopNote(idx));
-    });
-
-    // Keyboard support
-    const keyMap = {
-      '1': -480, '2': -240, '3': 0, '4': 240, '5': 480,
-      '6': 720, '7': 960, '8': 1200, '9': 1440,
-      'q': -480, 'w': -240, 'e': 0, 'r': 240, 't': 480,
-      'y': 720, 'u': 960, 'i': 1200, 'o': 1440
-    };
-    document.addEventListener('keydown', e => {
+    document.addEventListener('keydown', (e) => {
       if (e.repeat) return;
-      if (keyMap.hasOwnProperty(e.key)) startNote(`key${e.key}`, keyMap[e.key]);
+      if (e.key === '1') startNote('panelu', -480);
+      if (e.key === '2') startNote('key1', -240);
+      if (e.key === '3') startNote('key2', 0);
+      if (e.key === '4') startNote('key3', 240);
+      if (e.key === '5') startNote('key4', 480);
+      if (e.key === '6') startNote('key5', 720);
+      if (e.key === '7') startNote('key6', 960);
+      if (e.key === '8') startNote('key7', 1200);
+      if (e.key === '9') startNote('key8', 1440);
+      if (e.key === 'q') startNote('key9', -498);
+      if (e.key === 'w') startNote('key10', -316);
+      if (e.key === 'e') startNote('key11', -112);
+      if (e.key === 'r') startNote('key12', 0);
+      if (e.key === 't') startNote('key13', 204);
+      if (e.key === 'y') startNote('key14', 386);
+      if (e.key === 'u') startNote('key15', 498);
+      if (e.key === 'i') startNote('key16', 702);
+      if (e.key === 'o') startNote('key17', 884);
+      if (e.key === 'p') startNote('key18', 1088);
+      if (e.key === '[') startNote('key19', 1200);
+
     });
-    document.addEventListener('keyup', e => {
-      if (keyMap.hasOwnProperty(e.key)) stopNote(`key${e.key}`);
+    document.addEventListener('keyup', (e) => {
+      if (e.key === '1') stopNote('panelu');
+      if (e.key === '2') stopNote('key1');
+      if (e.key === '3') stopNote('key2');
+      if (e.key === '4') stopNote('key3');
+      if (e.key === '5') stopNote('key4');
+      if (e.key === '6') stopNote('key5');
+      if (e.key === '7') stopNote('key6');
+      if (e.key === '8') stopNote('key7');
+      if (e.key === '9') stopNote('key8');
+      if (e.key === 'q') stopNote('key9');
+      if (e.key === 'w') stopNote('key10');
+      if (e.key === 'e') stopNote('key11');
+      if (e.key === 'r') stopNote('key12');
+      if (e.key === 't') stopNote('key13');
+      if (e.key === 'y') stopNote('key14');
+      if (e.key === 'u') stopNote('key15');
+      if (e.key === 'i') stopNote('key16');
+      if (e.key === 'o') stopNote('key17');
+      if (e.key === 'p') stopNote('key18');
+      if (e.key === '[') stopNote('key19');
+
     });
   </script>
 </body>
