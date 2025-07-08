@@ -8,24 +8,31 @@
     body { font-family: sans-serif; text-align: center; background: #fafafa; padding: 2rem; }
     .btn-tone {
       display: inline-block;
-      padding: 15px 30px;
+      padding: 15px 15px;
       margin: 10px;
-      border-radius: 12px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-weight: light;
       color: white;
-      background: linear-gradient(45deg, #f12711, #f5af19);
+      background: linear-gradient(45deg, #f12777, #f5af19);
       box-shadow: 0 4px 15px rgba(241,39,17,0.5);
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Custom 17 EDO Buttons</h1>
-  <p>Klik atau tekan keyboard (A S D) untuk mainkan nada</p>
-
-  <a class="btn-tone" onmousedown="startNote('btn0',0)" onmouseup="stopNote('btn0')" onmouseleave="stopNote('btn0')">Kogatilla</a>
-  <a class="btn-tone" onmousedown="startNote('btn1',141)" onmouseup="stopNote('btn1')" onmouseleave="stopNote('btn1')">Tragallim</a>
-  <a class="btn-tone" onmousedown="startNote('btn2',282)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Hexang</a>
+  <h1>Gialle's Tones </h1>
+  <p>Klik atau tekan keyboard (A S D F) untuk bunyikan nada</p>
+  <p>Salendro Padantara/5EDO, Tugu=440hz
+  <p>
+  <a class="btn-tone" onmousedown="startNote('btn0',-480)" onmouseup="stopNote('btn0')" onmouseleave="stopNote('btn0')">Panelu<br>3̇<br>-480 c</a>  
+  <a class="btn-tone" onmousedown="startNote('btn1',-240)" onmouseup="stopNote('btn1')" onmouseleave="stopNote('btn1')">Loloran<br>2̇<br>-240 c</a>  
+  <a class="btn-tone" onmousedown="startNote('btn2',0)" onmouseup="stopNote('btn2')" onmouseleave="stopNote('btn2')">Tugu<br>1̇<br>0 c</a>
+  <a class="btn-tone" onmousedown="startNote('btn3',240)" onmouseup="stopNote('btn3')" onmouseleave="stopNote('btn3')">Singgul<br>5<br>240 c</a>
+  <a class="btn-tone" onmousedown="startNote('btn4',480)" onmouseup="stopNote('btn4')" onmouseleave="stopNote('btn4')">Galimer<br>4<br>480 c</a>
+  <a class="btn-tone" onmousedown="startNote('btn5',720)" onmouseup="stopNote('btn5')" onmouseleave="stopNote('btn5')">Panelu<br>3<br>720 c</a>
+  <a class="btn-tone" onmousedown="startNote('btn6',960)" onmouseup="stopNote('btn6')" onmouseleave="stopNote('btn6')">Loloran<br>2<br>960 c</a>
+  <a class="btn-tone" onmousedown="startNote('btn7',1200)" onmouseup="stopNote('btn7')" onmouseleave="stopNote('btn7')">Tugu<br>1<br>1200 c</a>
+ <a class="btn-tone" onmousedown="startNote('btn8',1440)" onmouseup="stopNote('btn8')" onmouseleave="stopNote('btn7')">Singgul<br>5̣<br>1440 c</a>
 
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -54,14 +61,26 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.repeat) return;
-      if (e.key === 'a') startNote('key0', 0);
-      if (e.key === 's') startNote('key1', 141);
-      if (e.key === 'd') startNote('key2', 282);
+      if (e.key === 'a') startNote('key0', -480);
+      if (e.key === 's') startNote('key1', -240);
+      if (e.key === 'd') startNote('key2', 0);
+      if (e.key === 'f') startNote('key3', 240);
+      if (e.key === 'g') startNote('key4', 480);
+      if (e.key === 'h') startNote('key5', 720);
+      if (e.key === 'j') startNote('key6', 960);
+      if (e.key === 'k') startNote('key7', 1200);
+      if (e.key === 'l') startNote('key8', 1440);
     });
     document.addEventListener('keyup', (e) => {
       if (e.key === 'a') stopNote('key0');
       if (e.key === 's') stopNote('key1');
       if (e.key === 'd') stopNote('key2');
+      if (e.key === 'f') stopNote('key3');
+      if (e.key === 'g') stopNote('key4');
+      if (e.key === 'h') stopNote('key5');
+      if (e.key === 'j') stopNote('key6');
+      if (e.key === 'k') stopNote('key7');
+      if (e.key === 'l') stopNote('key8');
     });
   </script>
 </body>
