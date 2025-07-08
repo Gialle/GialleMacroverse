@@ -18,7 +18,7 @@
     }
     .btn-tone {
       display: inline-block;
-      padding: 15px 15px;
+      padding: 10px 10px;
       margin: 10px;
       border-radius: 10px;
       font-weight: light;
@@ -66,31 +66,31 @@
       const { osc, gain } = activeNotes[key];
       gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
       osc.stop(audioCtx.currentTime + 1);
-      activeNotes[key];
+      delete activeNotes[key];
     }
 
     document.addEventListener('keydown', (e) => {
       if (e.repeat) return;
-      if (e.key === 'q') startNote('key0', -480);
-      if (e.key === 'w') startNote('key1', -240);
-      if (e.key === 'e') startNote('key2', 0);
-      if (e.key === 'r') startNote('key3', 240);
-      if (e.key === 't') startNote('key4', 480);
-      if (e.key === 'y') startNote('key5', 720);
-      if (e.key === 'u') startNote('key6', 960);
-      if (e.key === 'i') startNote('key7', 1200);
-      if (e.key === 'o') startNote('key8', 1440);
+      if (e.key === '1') startNote('key0', -480);
+      if (e.key === '2') startNote('key1', -240);
+      if (e.key === '3') startNote('key2', 0);
+      if (e.key === '4') startNote('key3', 240);
+      if (e.key === '5') startNote('key4', 480);
+      if (e.key === '6') startNote('key5', 720);
+      if (e.key === '7') startNote('key6', 960);
+      if (e.key === '8') startNote('key7', 1200);
+      if (e.key === '9') startNote('key8', 1440);
     });
     document.addEventListener('keyup', (e) => {
-      if (e.key === 'q') stopNote('key0');
-      if (e.key === 'w') stopNote('key1');
-      if (e.key === 'e') stopNote('key2');
-      if (e.key === 'r') stopNote('key3');
-      if (e.key === 't') stopNote('key4');
-      if (e.key === 'y') stopNote('key5');
-      if (e.key === 'u') stopNote('key6');
-      if (e.key === 'i') stopNote('key7');
-      if (e.key === 'o') stopNote('key8');
+      if (e.key === '1') stopNote('key0');
+      if (e.key === '2') stopNote('key1');
+      if (e.key === '3') stopNote('key2');
+      if (e.key === '4') stopNote('key3');
+      if (e.key === '5') stopNote('key4');
+      if (e.key === '6') stopNote('key5');
+      if (e.key === '7') stopNote('key6');
+      if (e.key === '8') stopNote('key7');
+      if (e.key === '9') stopNote('key8');
     });
   </script>
 </body>
