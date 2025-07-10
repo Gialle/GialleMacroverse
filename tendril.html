@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Tendril Polyphonic Notation (FINAL Robust Transpose)</title>
+<title>Tendril Polyphonic Notation (CDN fallback)</title>
 <style>
   @font-face {
     font-family: 'Notatica';
-    src: url('notatica.otf') format('opentype');
+    src: url('Notatica.otf') format('opentype'),
+         url('https://raw.githubusercontent.com/Gialle/GialleMacroverse/main/Notatica.otf') format('opentype');
   }
   body {
     font-family: sans-serif;
@@ -244,4 +245,4 @@ function transpose(delta) {
 </script>
 
 </body>
-</html>
+  </html>
