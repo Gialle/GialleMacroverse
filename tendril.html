@@ -2,239 +2,124 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Tendril Polyphonic Notation (Hierarchy Beam)</title>
+<title>Tendril Notation Player</title>
 <style>
-  @font-face {
-    font-family: 'Notatica';
-    src: url('Notatica.otf') format('opentype'),
-         url('https://raw.githubusercontent.com/Gialle/GialleMacroverse/main/Notatica.otf') format('opentype');
-  }
-  body {
-    font-family: sans-serif;
-    background: #121212;
-    color: #eee;
-    padding: 20px;
-  }
-  textarea {
-    width: 100%;
-    height: 60px;
-    font-size: 48px;
-    font-family: 'Notatica', sans-serif;
-    background: #1e1e1e;
-    color: #f0f0f0;
-    margin-bottom: 10px;
-  }
-  label, input, button {
-    font-size: 18px;
-    margin-right: 10px;
-  }
-  .voice-container {
-    margin-bottom: 15px;
-  }
+  body { font-family: sans-serif; background: #111; color: #eee; padding:2rem; }
+  textarea { width:100%; height:100px; font-family: 'Notatica', monospace; font-size:2rem; background:#222; color:#0f0; }
+  button,input { margin:0.5rem; padding:0.5rem 1rem; font-size:1rem; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap">
+<style>
+@font-face {
+  font-family: 'Notatica';
+  src: url('Notatica.otf') format('opentype'),
+       url('https://cdn.jsdelivr.net/gh/Gialle/GialleMacroverse@main/Notatica.otf') format('opentype');
+}
+textarea { font-family: 'Notatica', 'Fira Mono', monospace; }
 </style>
 </head>
 <body>
 
-<h2>Tendril Polyphonic Notation (Hierarchy Beam)</h2>
-
-<label>BPM: <input type="number" id="bpm" value="120"></label>
-<label>MIDI: <input type="number" id="baseMidi" value="69"></label>
-<label>Cents: <input type="number" id="baseCents" value="0"></label>
-<br><br>
-
-<div id="voices">
-  <div class="voice-container">
-    <textarea>1j2k3l4l5w6</textarea>
-  </div>
-</div>
-
-<button onclick="addVoice()">➕ Add Voice</button>
-<button onclick="removeVoice()">➖ Remove Voice</button>
-<button onclick="transpose(1)">⬆ Transpose +1</button>
-<button onclick="transpose(-1)">⬇ Transpose -1</button>
-<br><br>
-<button onclick="play()">▶ Play</button>
+<h1>Tendril Notation Player</h1>
+<div id="voices"></div>
+<button onclick="addVoice()">+ Voice</button>
+<button onclick="removeVoice()">- Voice</button>
+<br>
+<label>BPM <input type="number" id="bpm" value="120"></label>
+<label>MIDI Base <input type="number" id="midiBase" value="60"></label>
+<label>+ Cents <input type="number" id="cents" value="0"></label>
+<button onclick="transpose(1)">Transpose +1</button>
+<button onclick="transpose(-1)">Transpose -1</button>
+<br>
+<button onclick="play()">Play</button>
 
 <script>
-const edoSteps = 17;
-const stepRatio = Math.pow(2, 1/edoSteps);
-const noteMap = {
-  '1': 0, '2':1, '3':2, '4':3, '5':4, '6':5, '7':6, '8':7, '9':8,
-  'q':9, 'w':10, 'e':11, 'r':12, 't':13, 'y':14, 'u':15, 'i':16
-};
-const stepChars = "123456789qwertyui";
-
-let bpm, baseMidi, baseCents, beatSec, baseFreq;
-
-function updateSettings() {
-  bpm = parseFloat(document.getElementById("bpm").value);
-  baseMidi = parseFloat(document.getElementById("baseMidi").value);
-  baseCents = parseFloat(document.getElementById("baseCents").value);
-  beatSec = 60 / bpm;
-  baseFreq = 440 * Math.pow(2, ((baseMidi - 69 + (baseCents/100)) / 12));
+let voices = [], transposition = 0;
+function addVoice() {
+  let ta = document.createElement('textarea');
+  ta.placeholder = "Type tendril notation here...";
+  document.getElementById('voices').appendChild(ta);
+  voices.push(ta);
 }
+function removeVoice() {
+  if(voices.length>0){
+    let ta = voices.pop();
+    ta.remove();
+  }
+}
+addVoice();
 
-function parseNotation(input) {
-  let result = [];
-  let i = 0;
-  let beamContext = null; // current beam duration
-  let beamStack = []; // stack for fallback beams
-  let beamOctave = 0;
+function parseTendril(input){
+  let tokens = input.split('');
+  let notes = [];
+  const beamMap = { 'l':0.125, 'k':0.25, 'j':0.5, 'L':0.125, 'K':0.25, 'J':0.5, 'h':2, 'g':4 };
+  const beamPower = { 'l':3, 'k':2, 'j':1, 'L':3, 'K':2, 'J':1, 'h':2, 'g':2 };
 
-  while (i < input.length) {
-    if ('123456789qwertyui0'.includes(input[i])) {
-      let pitch = input[i]==='0' ? null : input[i];
-      i++;
-
-      // octave
-      let octave = 0;
-      while (i < input.length && (input[i] === '-' || input[i] === '=')) {
-        if (input[i] === '-') octave++;
-        if (input[i] === '=') octave--;
-        i++;
-      }
-
-      // rhythm standalone
-      let dur = 1;
-      if (i < input.length && (input[i]==='h' || input[i]==='g')) {
-        dur = input[i]==='h'?2:4;
-        beamContext = null;
-        beamStack = [];
-        i++;
-      }
-      else if (i < input.length && 'ljk'.includes(input[i])) {
-        let thisDur = input[i]==='l'?0.125:input[i]==='k'?0.25:0.5;
-        beamStack.push({dur:beamContext, octave:beamOctave});
-        beamContext = thisDur;
-        beamOctave = octave;
-        dur = thisDur;
-        i++;
-      }
-      else if (beamContext !== null && octave === beamOctave) {
-        dur = beamContext;
-      } else {
-        beamContext = null;
-        beamStack = [];
-      }
-
-      // dotted
-      if (i < input.length && (input[i]==='.' || input[i]===',')) {
-        dur *= input[i]==='.'?1.5:1.75;
-        i++;
-        while (i < input.length && 'hgjkl'.includes(input[i])) i++;
-        beamContext = null;
-        beamStack = [];
-      }
-
-      result.push({ pitch, dur, octave });
-    } else if ('ljk'.includes(input[i])) {
-      let thisDur = input[i]==='l'?0.125:input[i]==='k'?0.25:0.5;
-      beamStack.push({dur:beamContext, octave:beamOctave});
-      beamContext = thisDur;
-      beamOctave = 0;
-      result.push({ pitch: null, dur: thisDur, octave: 0 });
-      i++;
-    } else {
-      // finish beam if octave doesn't match
-      if (beamStack.length > 0) {
-        let last = beamStack.pop();
-        beamContext = last.dur;
-        beamOctave = last.octave;
-      } else {
-        beamContext = null;
-      }
-      i++;
+  for(let i=0; i<tokens.length; i++){
+    let t = tokens[i];
+    if("123456789qwertyui0=-".includes(t)){
+      notes.push({note:t, dur:1, power:0});
     }
   }
-  return result;
+  for(let i=0; i<tokens.length; i++){
+    let t = tokens[i];
+    let idx = notes.findIndex((_,ix)=>ix>=0 && tokens.slice(0,i+1).filter(c=>"123456789qwertyui0=-".includes(c)).length-1===ix);
+    if("jkl".includes(t)){
+      if(idx>0 && beamPower[t] > notes[idx-1].power){
+        notes[idx-1].dur = beamMap[t];
+        notes[idx-1].power = beamPower[t];
+      }
+      if(idx<notes.length-1 && beamPower[t] > notes[idx+1].power){
+        notes[idx+1].dur = beamMap[t];
+        notes[idx+1].power = beamPower[t];
+      }
+    }
+    if("JKLhg".includes(t)){
+      if(idx>0 && beamPower[t] > notes[idx-1].power){
+        notes[idx-1].dur = beamMap[t];
+        notes[idx-1].power = beamPower[t];
+      }
+    }
+  }
+  return notes;
 }
 
-function getFreq(step, octave=0) {
-  let totalSteps = step + octave * edoSteps;
-  return baseFreq * Math.pow(stepRatio, totalSteps - 12);
+function transpose(step){
+  transposition += step;
+  alert("Transposed to "+transposition+" step(s).");
 }
 
-function play() {
-  updateSettings();
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  const ctx = new AudioContext();
-
-  let voiceElements = document.querySelectorAll("#voices textarea");
-  let voices = Array.from(voiceElements).map(el => parseNotation(el.value));
-
-  voices.forEach(seq => {
-    let t = ctx.currentTime;
-    for (let n of seq) {
-      if (n.pitch !== null) {
-        let step = noteMap[n.pitch];
-        let freq = getFreq(step, n.octave);
+async function play(){
+  let bpm = parseFloat(document.getElementById('bpm').value);
+  let base = parseInt(document.getElementById('midiBase').value);
+  let cents = parseInt(document.getElementById('cents').value);
+  let ctx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  let voicesData = voices.map(v=>parseTendril(v.value));
+  let maxLen = Math.max(...voicesData.map(v=>v.length));
+  let t = ctx.currentTime;
+  for(let i=0;i<maxLen;i++){
+    voicesData.forEach((voice,vx)=>{
+      if(i<voice.length){
+        let n = voice[i];
+        if(n.note==='0') return;
+        let midi = base + "123456789qwertyui".indexOf(n.note.replace(/[-=]/,'')) + transposition*1;
+        if(n.note.includes('-')) midi+=17;
+        if(n.note.includes('=')) midi-=17;
+        let freq = 440 * Math.pow(2,(midi-69)/12 + cents/1200);
         let osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t);
+        osc.frequency.value = freq;
         let gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + n.dur * beatSec);
+        gain.gain.setValueAtTime(0.2,t);
+        gain.gain.linearRampToValueAtTime(0,t+n.dur*60/bpm);
         osc.connect(gain).connect(ctx.destination);
         osc.start(t);
-        osc.stop(t + n.dur * beatSec);
+        osc.stop(t+n.dur*60/bpm);
       }
-      t += n.dur * beatSec;
-    }
-  });
-}
-
-function addVoice() {
-  let container = document.getElementById("voices");
-  let div = document.createElement("div");
-  div.className = "voice-container";
-  div.innerHTML = `<textarea></textarea>`;
-  container.appendChild(div);
-}
-
-function removeVoice() {
-  let container = document.getElementById("voices");
-  if (container.children.length > 0) {
-    container.removeChild(container.lastChild);
+    });
+    t+= Math.min(...voicesData.map(v=>i<v.length?v[i].dur*60/bpm:0.1));
   }
 }
-
-function transpose(delta) {
-  let voiceElements = document.querySelectorAll("#voices textarea");
-  voiceElements.forEach(el => {
-    let input = el.value;
-    let output = "";
-    let i = 0;
-    while (i < input.length) {
-      let c = input[i];
-      if (stepChars.includes(c)) {
-        let baseIdx = stepChars.indexOf(c);
-        let octave = 0;
-        let j = i+1;
-        while (j < input.length && (input[j]==='-' || input[j]==='=')) {
-          if (input[j]==='-') octave++;
-          if (input[j]==='=') octave--;
-          j++;
-        }
-        let totalSteps = baseIdx + octave * 17 + delta;
-        let newIdx = ((totalSteps % 17) + 17) % 17;
-        let newOctave = Math.floor(totalSteps / 17);
-        output += stepChars[newIdx];
-        if (newOctave > 0) output += "-".repeat(newOctave);
-        if (newOctave < 0) output += "=".repeat(-newOctave);
-        while (j < input.length && 'hgjkl.,'.includes(input[j])) {
-          output += input[j];
-          j++;
-        }
-        i = j;
-      } else {
-        output += c;
-        i++;
-      }
-    }
-    el.value = output;
-  });
-}
 </script>
-
 </body>
 </html>
