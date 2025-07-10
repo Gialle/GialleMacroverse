@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Tendril Polyphonic Notation (CDN fallback)</title>
+<title>Tendril Polyphonic Notation (Hierarchy Beam)</title>
 <style>
   @font-face {
     font-family: 'Notatica';
@@ -35,7 +35,7 @@
 </head>
 <body>
 
-<h2>Tendril Polyphonic Notation</h2>
+<h2>Tendril Polyphonic Notation (Hierarchy Beam)</h2>
 
 <label>BPM: <input type="number" id="bpm" value="120"></label>
 <label>MIDI: <input type="number" id="baseMidi" value="69"></label>
@@ -44,10 +44,7 @@
 
 <div id="voices">
   <div class="voice-container">
-    <textarea>7-7=7h 8-. 1=h</textarea>
-  </div>
-  <div class="voice-container">
-    <textarea>5=5=5=5=</textarea>
+    <textarea>1j2k3l4l5w6</textarea>
   </div>
 </div>
 
@@ -80,26 +77,16 @@ function updateSettings() {
 function parseNotation(input) {
   let result = [];
   let i = 0;
-  let beamContext = null;
-  let beamContextOctave = 0;
+  let beamContext = null; // current beam duration
+  let beamStack = []; // stack for fallback beams
+  let beamOctave = 0;
 
   while (i < input.length) {
-    if ('JKL'.includes(input[i])) {
-      result.push({
-        pitch: null,
-        dur: input[i]==='J'?0.5:input[i]==='K'?0.25:0.125,
-        octave: 0
-      });
-      beamContext = null;
-      i++;
-      continue;
-    }
-
     if ('123456789qwertyui0'.includes(input[i])) {
       let pitch = input[i]==='0' ? null : input[i];
       i++;
 
-      // octave postfix
+      // octave
       let octave = 0;
       while (i < input.length && (input[i] === '-' || input[i] === '=')) {
         if (input[i] === '-') octave++;
@@ -107,35 +94,55 @@ function parseNotation(input) {
         i++;
       }
 
-      // rhythm postfix
+      // rhythm standalone
       let dur = 1;
       if (i < input.length && (input[i]==='h' || input[i]==='g')) {
         dur = input[i]==='h'?2:4;
         beamContext = null;
+        beamStack = [];
         i++;
       }
-      else if (i < input.length && 'jkl'.includes(input[i])) {
-        dur = input[i]==='j'?0.5:input[i]==='k'?0.25:0.125;
-        beamContext = dur;
-        beamContextOctave = octave;
+      else if (i < input.length && 'ljk'.includes(input[i])) {
+        let thisDur = input[i]==='l'?0.125:input[i]==='k'?0.25:0.5;
+        beamStack.push({dur:beamContext, octave:beamOctave});
+        beamContext = thisDur;
+        beamOctave = octave;
+        dur = thisDur;
         i++;
       }
-      else if (beamContext !== null && octave === beamContextOctave) {
+      else if (beamContext !== null && octave === beamOctave) {
         dur = beamContext;
       } else {
         beamContext = null;
+        beamStack = [];
       }
 
-      // dotted after rhythm
+      // dotted
       if (i < input.length && (input[i]==='.' || input[i]===',')) {
         dur *= input[i]==='.'?1.5:1.75;
         i++;
-        while (i < input.length && 'jklhg'.includes(input[i])) i++;
+        while (i < input.length && 'hgjkl'.includes(input[i])) i++;
         beamContext = null;
+        beamStack = [];
       }
 
       result.push({ pitch, dur, octave });
+    } else if ('ljk'.includes(input[i])) {
+      let thisDur = input[i]==='l'?0.125:input[i]==='k'?0.25:0.5;
+      beamStack.push({dur:beamContext, octave:beamOctave});
+      beamContext = thisDur;
+      beamOctave = 0;
+      result.push({ pitch: null, dur: thisDur, octave: 0 });
+      i++;
     } else {
+      // finish beam if octave doesn't match
+      if (beamStack.length > 0) {
+        let last = beamStack.pop();
+        beamContext = last.dur;
+        beamOctave = last.octave;
+      } else {
+        beamContext = null;
+      }
       i++;
     }
   }
@@ -154,10 +161,6 @@ function play() {
 
   let voiceElements = document.querySelectorAll("#voices textarea");
   let voices = Array.from(voiceElements).map(el => parseNotation(el.value));
-
-  voices.forEach((v, idx) => {
-    console.log(`Voice ${idx}:`, JSON.stringify(v, null, 2));
-  });
 
   voices.forEach(seq => {
     let t = ctx.currentTime;
@@ -197,18 +200,14 @@ function removeVoice() {
 
 function transpose(delta) {
   let voiceElements = document.querySelectorAll("#voices textarea");
-
   voiceElements.forEach(el => {
     let input = el.value;
     let output = "";
     let i = 0;
-
     while (i < input.length) {
       let c = input[i];
       if (stepChars.includes(c)) {
         let baseIdx = stepChars.indexOf(c);
-
-        // read existing octave postfix
         let octave = 0;
         let j = i+1;
         while (j < input.length && (input[j]==='-' || input[j]==='=')) {
@@ -216,19 +215,12 @@ function transpose(delta) {
           if (input[j]==='=') octave--;
           j++;
         }
-
-        // absolute step position
         let totalSteps = baseIdx + octave * 17 + delta;
-
-        // normalize
         let newIdx = ((totalSteps % 17) + 17) % 17;
         let newOctave = Math.floor(totalSteps / 17);
-
         output += stepChars[newIdx];
         if (newOctave > 0) output += "-".repeat(newOctave);
         if (newOctave < 0) output += "=".repeat(-newOctave);
-
-        // copy rhythm
         while (j < input.length && 'hgjkl.,'.includes(input[j])) {
           output += input[j];
           j++;
@@ -245,4 +237,4 @@ function transpose(delta) {
 </script>
 
 </body>
-  </html>
+</html>
