@@ -8,14 +8,13 @@
   textarea { width:100%; height:100px; font-family: 'Notatica', monospace; font-size:2rem; background:#222; color:#0f0; }
   button,input { margin:0.5rem; padding:0.5rem 1rem; font-size:1rem; }
 </style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap">
 <style>
 @font-face {
   font-family: 'Notatica';
   src: url('Notatica.otf') format('opentype'),
        url('https://cdn.jsdelivr.net/gh/Gialle/GialleMacroverse@main/Notatica.otf') format('opentype');
 }
-textarea { font-family: 'Notatica', 'Fira Mono', monospace; }
+textarea { font-family: 'Notatica', monospace; }
 </style>
 </head>
 <body>
@@ -52,32 +51,34 @@ addVoice();
 function parseTendril(input){
   let tokens = input.split('');
   let notes = [];
-  const beamMap = { 'l':0.125, 'k':0.25, 'j':0.5, 'L':0.125, 'K':0.25, 'J':0.5, 'h':2, 'g':4 };
-  const beamPower = { 'l':3, 'k':2, 'j':1, 'L':3, 'K':2, 'J':1, 'h':2, 'g':2 };
+  const beamDur = {'l':0.125, 'k':0.25, 'j':0.5};
+  const beamPower = {'l':3, 'k':2, 'j':1};
 
+  // Build notes
   for(let i=0; i<tokens.length; i++){
     let t = tokens[i];
     if("123456789qwertyui0=-".includes(t)){
       notes.push({note:t, dur:1, power:0});
     }
   }
+
+  // Apply modifiers: scan tokens, apply to notes before & after
+  let noteIdx = -1;
   for(let i=0; i<tokens.length; i++){
     let t = tokens[i];
-    let idx = notes.findIndex((_,ix)=>ix>=0 && tokens.slice(0,i+1).filter(c=>"123456789qwertyui0=-".includes(c)).length-1===ix);
-    if("jkl".includes(t)){
-      if(idx>0 && beamPower[t] > notes[idx-1].power){
-        notes[idx-1].dur = beamMap[t];
-        notes[idx-1].power = beamPower[t];
-      }
-      if(idx<notes.length-1 && beamPower[t] > notes[idx+1].power){
-        notes[idx+1].dur = beamMap[t];
-        notes[idx+1].power = beamPower[t];
-      }
+    if("123456789qwertyui0=-".includes(t)){
+      noteIdx++;
     }
-    if("JKLhg".includes(t)){
-      if(idx>0 && beamPower[t] > notes[idx-1].power){
-        notes[idx-1].dur = beamMap[t];
-        notes[idx-1].power = beamPower[t];
+    if("jkl".includes(t)){
+      // apply to note before
+      if(noteIdx>0 && beamPower[t] > notes[noteIdx-1].power){
+        notes[noteIdx-1].dur = beamDur[t];
+        notes[noteIdx-1].power = beamPower[t];
+      }
+      // apply to note after
+      if(noteIdx+1 < notes.length && beamPower[t] > notes[noteIdx+1].power){
+        notes[noteIdx+1].dur = beamDur[t];
+        notes[noteIdx+1].power = beamPower[t];
       }
     }
   }
@@ -103,7 +104,9 @@ async function play(){
       if(i<voice.length){
         let n = voice[i];
         if(n.note==='0') return;
-        let midi = base + "123456789qwertyui".indexOf(n.note.replace(/[-=]/,'')) + transposition*1;
+        let midiStep = "123456789qwertyui".indexOf(n.note.replace(/[-=]/,'')) + transposition*1;
+        if(midiStep<0) return;
+        let midi = base + midiStep;
         if(n.note.includes('-')) midi+=17;
         if(n.note.includes('=')) midi-=17;
         let freq = 440 * Math.pow(2,(midi-69)/12 + cents/1200);
