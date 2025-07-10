@@ -54,28 +54,20 @@ function parseTendril(input){
   const beamDur = {'l':0.125, 'k':0.25, 'j':0.5};
   const beamPower = {'l':3, 'k':2, 'j':1};
 
-  // Build notes
-  for(let i=0; i<tokens.length; i++){
-    let t = tokens[i];
-    if("123456789qwertyui0=-".includes(t)){
-      notes.push({note:t, dur:1, power:0});
-    }
-  }
-
-  // Apply modifiers: scan tokens, apply to notes before & after
   let noteIdx = -1;
   for(let i=0; i<tokens.length; i++){
     let t = tokens[i];
     if("123456789qwertyui0=-".includes(t)){
+      notes.push({note:t, dur:1, power:0});
       noteIdx++;
     }
     if("jkl".includes(t)){
-      // apply to note before
-      if(noteIdx>0 && beamPower[t] > notes[noteIdx-1].power){
-        notes[noteIdx-1].dur = beamDur[t];
-        notes[noteIdx-1].power = beamPower[t];
+      // apply to previous
+      if(noteIdx>=0 && beamPower[t] > notes[noteIdx].power){
+        notes[noteIdx].dur = beamDur[t];
+        notes[noteIdx].power = beamPower[t];
       }
-      // apply to note after
+      // apply to next
       if(noteIdx+1 < notes.length && beamPower[t] > notes[noteIdx+1].power){
         notes[noteIdx+1].dur = beamDur[t];
         notes[noteIdx+1].power = beamPower[t];
@@ -103,12 +95,13 @@ async function play(){
     voicesData.forEach((voice,vx)=>{
       if(i<voice.length){
         let n = voice[i];
-        if(n.note==='0') return;
-        let midiStep = "123456789qwertyui".indexOf(n.note.replace(/[-=]/,'')) + transposition*1;
+        if(n.note==='0') return; // rest
+        let cleanNote = n.note.replace(/[-=]/g,'');
+        let midiStep = "123456789qwertyui".indexOf(cleanNote);
         if(midiStep<0) return;
-        let midi = base + midiStep;
-        if(n.note.includes('-')) midi+=17;
-        if(n.note.includes('=')) midi-=17;
+        let up = (n.note.match(/-/g)||[]).length;
+        let down = (n.note.match(/=/g)||[]).length;
+        let midi = base + midiStep + (up - down)*17 + transposition;
         let freq = 440 * Math.pow(2,(midi-69)/12 + cents/1200);
         let osc = ctx.createOscillator();
         osc.frequency.value = freq;
